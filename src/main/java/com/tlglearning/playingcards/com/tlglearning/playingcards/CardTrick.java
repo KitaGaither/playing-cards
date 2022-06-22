@@ -15,6 +15,7 @@ public class CardTrick {
         blackPile = new LinkedList<>();
         redPile = new LinkedList<>();
     }
+
     public static void main(String[] args) { // All things below will be their own methods
 
         Deck deck = new Deck();
@@ -65,27 +66,27 @@ public class CardTrick {
                 redCount++;
             }
         }
+
+        class DisplayComparator implements Comparator<Card> {
+
+            @Override
+            public int compare(Card card1, Card card2) {
+
+                int comparison = card1.getSuit().getColor().compareTo(card2.getSuit().getColor()); //matches return type
+                comparison = (comparison != 0) ? comparison : card1.getSuit().compareTo(card2.getSuit());
+                comparison = (comparison != 0) ? comparison : card1.getRank().compareTo(card2.getRank());
+
+                return comparison; //matches field/local variable
+            }
+        }
+
+
         Comparator<Card> comparator = new DisplayComparator();
-        Collections.sort((LinkedList<Card>)blackPile, comparator);
-        Collections.sort((LinkedList<Card>)redPile, comparator);
-
-
+        Collections.sort((LinkedList<Card>) blackPile, comparator);
+        Collections.sort((LinkedList<Card>) redPile, comparator);
         System.out.printf("Black: count=%d, cards=%s%n", blackCount, blackPile);
         System.out.printf("Red: count=%d, cards=%s%n", redCount, redPile);
 
-    }
-
-    private static class DisplayComparator implements Comparator<Card> {
-
-        @Override
-        public int compare(Card card1, Card card2) {
-
-            int comparison = card1.getSuit().getColor().compareTo(card2.getSuit().getColor()); //matches return type
-            comparison = (comparison != 0) ? comparison : card1.getSuit().compareTo(card2.getSuit());
-            comparison = (comparison != 0) ? comparison : card1.getRank().compareTo(card2.getRank());
-
-            return comparison; //matches field/local variable
-        }
     }
 
 }
