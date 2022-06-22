@@ -81,7 +81,18 @@ public class CardTrick {
         }
 
 
-        Comparator<Card> comparator = new DisplayComparator();
+        Comparator<Card> comparator = new Comparator<>() { // <---------- This is an anonymous class. Can't have a constructor
+
+            @Override
+            public int compare(Card card1, Card card2) {
+
+                int comparison = card1.getSuit().getColor().compareTo(card2.getSuit().getColor()); //matches return type
+                comparison = (comparison != 0) ? comparison : card1.getSuit().compareTo(card2.getSuit());
+                comparison = (comparison != 0) ? comparison : card1.getRank().compareTo(card2.getRank());
+
+                return comparison; //matches field/local variable
+            }
+        };
         Collections.sort((LinkedList<Card>) blackPile, comparator);
         Collections.sort((LinkedList<Card>) redPile, comparator);
         System.out.printf("Black: count=%d, cards=%s%n", blackCount, blackPile);
