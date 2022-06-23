@@ -5,16 +5,16 @@ import com.tlglearning.playingcards.model.Deck;
 import com.tlglearning.playingcards.model.Suit;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CardTrick {
 
-    private Deque<Card> redPile;
-    private Deque<Card> blackPile;
-
-    public CardTrick() {
-        blackPile = new LinkedList<>();
-        redPile = new LinkedList<>();
-    }
+    private final Deque<Card> redPile = new LinkedList<>();
+    private final Deque<Card> blackPile = new LinkedList<>();
+    private final Comparator<Card> displayComparator = Comparator
+            .comparing((Card c) -> c.getSuit().getColor())
+            .thenComparing(Card::getSuit)
+            .thenComparing(Card::getRank);
 
     public static void main(String[] args) { // All things below will be their own methods
 
@@ -54,50 +54,18 @@ public class CardTrick {
     }
 
     public void tally() {
-        int redCount = 0;
-        int blackCount = 0;
-        for (Card card : blackPile) {
-            if (card.getSuit().getColor() == Suit.Color.BLACK) {
-                blackCount++;
-            }
-        }
-        for (Card card : redPile) {
-            if (card.getSuit().getColor() == Suit.Color.RED) {
-                redCount++;
-            }
-        }
+        tallyPile(blackPile, Suit.Color.BLACK);
+        tallyPile(redPile, Suit.Color.RED);
+    }
 
-        class DisplayComparator implements Comparator<Card> {
-
-            @Override
-            public int compare(Card card1, Card card2) {
-
-                int comparison = card1.getSuit().getColor().compareTo(card2.getSuit().getColor()); //matches return type
-                comparison = (comparison != 0) ? comparison : card1.getSuit().compareTo(card2.getSuit());
-                comparison = (comparison != 0) ? comparison : card1.getRank().compareTo(card2.getRank());
-
-                return comparison; //matches field/local variable
-            }
-        }
-
-
-        Comparator<Card> comparator = new Comparator<>() { // <---------- This is an anonymous class. Can't have a constructor
-
-            @Override
-            public int compare(Card card1, Card card2) {
-
-                int comparison = card1.getSuit().getColor().compareTo(card2.getSuit().getColor()); //matches return type
-                comparison = (comparison != 0) ? comparison : card1.getSuit().compareTo(card2.getSuit());
-                comparison = (comparison != 0) ? comparison : card1.getRank().compareTo(card2.getRank());
-
-                return comparison; //matches field/local variable
-            }
-        };
-        Collections.sort((LinkedList<Card>) blackPile, comparator);
-        Collections.sort((LinkedList<Card>) redPile, comparator);
-        System.out.printf("Black: count=%d, cards=%s%n", blackCount, blackPile);
-        System.out.printf("Red: count=%d, cards=%s%n", redCount, redPile);
-
+    // Helper Method below(tallyPile)
+    private void tallyPile(Collection<Card> pile, Suit.Color color) {
+        long count = pile
+                .stream()
+                .filter((c) -> c.getSuit().getColor() == color)
+                .count();
+        System.out.printf("%1$s pile: cards=%2$s; count of %1$s cards=%3$d.%n",
+                color, pile.stream().sorted(displayComparator).collect(Collectors.toList()), count);
     }
 
 }
